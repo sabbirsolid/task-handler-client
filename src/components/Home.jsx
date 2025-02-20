@@ -1,41 +1,71 @@
 import { useContext, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { DragDropContext, } from "@hello-pangea/dnd";
 import { Toaster, toast } from "react-hot-toast";
-import { FiPlus } from "react-icons/fi";
+
 import axios from "axios";
 import Navbar from "./Navbar";
 import Login from "./Login";
 import { AuthContext } from "../Provider/AuthProvider";
+import TaskColumn from "./TaskColumn";
 
 const Home = () => {
-  const { user } = useContext(AuthContext);
+  const { user, loading } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
   // Fetch tasks using TanStack Query
-  const { data: tasks = { todo: [], "in-progress": [], done: [] }, refetch } =
-    useQuery({
-      queryKey: ["tasks"],
-      queryFn: async () => {
-        const res = await axios.get(
-          "http://localhost:5000/getTasks",
-          user?.email
-        );
-        const fetchedTasks = res.data;
-        return {
-          todo: fetchedTasks.filter((task) => task.category === "todo"),
-          "in-progress": fetchedTasks.filter(
-            (task) => task.category === "in-progress"
-          ),
-          done: fetchedTasks.filter((task) => task.category === "done"),
-        };
-      },
-    });
+  // const { data: tasks = { todo: [], "in-progress": [], done: [] }, refetch, isLoading } =
+  //   useQuery({
+  //     queryKey: ["tasks"],
+  //     queryFn: async () => {
+  //       const email = user?.email;
+  //       const res = await axios.get(
+  //         `http://localhost:5000/getTasks?email=${email}`
+  //       );
+  //       const fetchedTasks = res.data;
+  //       return {
+  //         todo: fetchedTasks.filter((task) => task.category === "todo"),
+  //         "in-progress": fetchedTasks.filter(
+  //           (task) => task.category === "in-progress"
+  //         ),
+  //         done: fetchedTasks.filter((task) => task.category === "done"),
+  //       };
+  //     },
+  //   });
+
+  const { data: tasks = { todo: [], "in-progress": [], done: [] }, refetch, isLoading } = useQuery({
+    queryKey: ["tasks"],
+    queryFn: async () => {
+      if (!user?.email) {
+        toast.error("User email is not available.");
+        return { todo: [], "in-progress": [], done: [] }; // Return empty tasks if no email
+      }
+
+      const email = user.email;
+      const res = await axios.get(`http://localhost:5000/getTasks?email=${email}`);
+      const fetchedTasks = res.data;
+      return {
+        todo: fetchedTasks.filter((task) => task.category === "todo"),
+        "in-progress": fetchedTasks.filter((task) => task.category === "in-progress"),
+        done: fetchedTasks.filter((task) => task.category === "done"),
+      };
+    },
+    enabled: !!user?.email, // Only run the query if the email is available
+  });
+
+   
 
   // Mutation for adding a new task
   const addTaskMutation = useMutation({
     mutationFn: async (newTask) => {
-      const res = await axios.post("http://localhost:5000/addTask", newTask);
+      const taskWithUserEmail = {
+        ...newTask,
+        email: user.email,
+      };
+      const res = await axios.post(
+        "http://localhost:5000/addTask",
+        taskWithUserEmail
+      );
       return res.data.task;
     },
     onSuccess: () => {
@@ -93,7 +123,7 @@ const Home = () => {
       {
         onError: () => {
           toast.error("Failed to move task");
-          queryClient.invalidateQueries(["tasks"]); // Refetch on error
+          queryClient.invalidateQueries(["tasks"]);
         },
       }
     );
@@ -131,11 +161,19 @@ const Home = () => {
     addTaskMutation.mutate(newTask);
   };
 
+  if (isLoading || loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="w-16 h-16 border-4 border-t-4 border-blue-600 border-solid rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen p-8">
       <Toaster position="top-right" />
       <Navbar />
-      <h1 className="text-4xl text-center font-bold text-secondary">
+      <h1 className="text-4xl text-center font-bold text-gray-800 mb-8">
         Task Management
       </h1>
 
@@ -147,18 +185,21 @@ const Home = () => {
               tasks={tasks.todo}
               droppableId="todo"
               openModal={openModal}
+              refetch={refetch}
             />
             <TaskColumn
               title="In Progress"
               tasks={tasks["in-progress"]}
               droppableId="in-progress"
               openModal={openModal}
+              refetch={refetch}
             />
             <TaskColumn
               title="Done"
               tasks={tasks.done}
               droppableId="done"
               openModal={openModal}
+              refetch={refetch}
             />
           </div>
         </DragDropContext>
@@ -219,43 +260,5 @@ const Home = () => {
 
 export default Home;
 
-// Task Column Component
-const TaskColumn = ({ title, tasks, droppableId, openModal }) => {
-  return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">{title}</h2>
-        <button onClick={openModal} className="btn btn-primary">
-          <FiPlus className="inline-block mr-1" />
-          Add Task
-        </button>
-      </div>
-      <Droppable droppableId={droppableId}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="task-column"
-          >
-            {tasks.map((task, index) => (
-              <Draggable key={task._id} draggableId={task._id} index={index}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className="task-card"
-                  >
-                    <h3 className="font-medium">{task.title}</h3>
-                    <p>{task.description}</p>
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </div>
-  );
-};
+
+
