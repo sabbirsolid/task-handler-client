@@ -1,86 +1,16 @@
-// import { Draggable, Droppable } from "@hello-pangea/dnd";
-// import axios from "axios";
-// import PropTypes from "prop-types";
-// import toast from "react-hot-toast";
-// import { FiPlus } from "react-icons/fi";
-
-// const TaskColumn = ({ title, tasks, droppableId, openModal, refetch }) => {
-//   const handleDelete = async (id) => {
-//     const res = await axios.delete(`http://localhost:5000/deleteTask/${id}`);
-//     if (res.data.deletedCount > 0) {
-//       refetch();
-//       toast.success("Deleted Successfully");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <div className="flex justify-between items-center mb-4">
-//         <h2 className="text-xl font-semibold">{title}</h2>
-//         <button
-//           onClick={openModal}
-//           className="px-4 py-2 bg-blue-600 text-white rounded"
-//         >
-//           <FiPlus className="inline-block mr-1" />
-//           Add Task
-//         </button>
-//       </div>
-//       <Droppable droppableId={droppableId}>
-//         {(provided) => (
-//           <div
-//             ref={provided.innerRef}
-//             {...provided.droppableProps}
-//             className="space-y-4"
-//           >
-//             {tasks.map((task, index) => (
-//               <Draggable key={task._id} draggableId={task._id} index={index}>
-//                 {(provided) => (
-//                   <div
-//                     ref={provided.innerRef}
-//                     {...provided.draggableProps}
-//                     {...provided.dragHandleProps}
-//                     className="p-4 border rounded shadow-lg"
-//                   >
-//                     <h3 className="font-medium">{task.title}</h3>
-//                     <p className="text-gray-600">{task.description}</p>
-//                     <button
-//                       className="mt-2 px-4 py-2 bg-red-600 text-white rounded"
-//                       onClick={() => handleDelete(task._id)}
-//                     >
-//                       Delete
-//                     </button>
-//                   </div>
-//                 )}
-//               </Draggable>
-//             ))}
-//             {provided.placeholder}
-//           </div>
-//         )}
-//       </Droppable>
-//     </div>
-//   );
-// };
-
-// TaskColumn.propTypes = {
-//   title: PropTypes.string.isRequired,
-//   tasks: PropTypes.array.isRequired,
-//   droppableId: PropTypes.string.isRequired,
-//   openModal: PropTypes.func.isRequired,
-//   refetch: PropTypes.func.isRequired,
-// };
-
-// export default TaskColumn;
-
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 import axios from "axios";
 import PropTypes from "prop-types";
 import toast from "react-hot-toast";
-import { FiPlus } from "react-icons/fi";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { FiTrash, FiEdit } from "react-icons/fi";
+import { AuthContext } from "../Provider/AuthProvider";
+import { format } from "date-fns";
 
-const TaskColumn = ({ title, tasks, droppableId, openModal, refetch }) => {
+const TaskColumn = ({ tasks, droppableId, refetch }) => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editTask, setEditTask] = useState(null);
+  const { user } = useContext(AuthContext);
 
   const handleDelete = async (id) => {
     const res = await axios.delete(`http://localhost:5000/deleteTask/${id}`);
@@ -107,10 +37,13 @@ const TaskColumn = ({ title, tasks, droppableId, openModal, refetch }) => {
     }
 
     try {
-      await axios.patch(`http://localhost:5000/updateTaskInfo/${editTask._id}`, {
-        title: editTask.title,
-        description: editTask.description,
-      });
+      await axios.patch(
+        `http://localhost:5000/updateTaskInfo/${editTask._id}`,
+        {
+          title: editTask.title,
+          description: editTask.description,
+        }
+      );
 
       toast.success("Task updated successfully!");
       refetch();
@@ -122,62 +55,77 @@ const TaskColumn = ({ title, tasks, droppableId, openModal, refetch }) => {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">{title}</h2>
-        <button
-          onClick={openModal}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          <FiPlus className="inline-block mr-1" />
-          Add Task
-        </button>
-      </div>
       <Droppable droppableId={droppableId}>
-        {(provided) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className="space-y-4"
-          >
-            {tasks.map((task, index) => (
-              <Draggable key={task._id} draggableId={task._id} index={index}>
-                {(provided) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                    className="p-4 border rounded shadow-lg"
-                  >
-                    <h3 className="font-medium">{task.title}</h3>
-                    <p className="text-gray-600">{task.description}</p>
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        className="px-4 py-2 bg-red-600 text-white rounded"
-                        onClick={() => handleDelete(task._id)}
-                      >
-                        Delete
-                      </button>
-                      <button
-                        className="px-4 py-2 bg-green-600 text-white rounded"
-                        onClick={() => openEditModal(task)}
-                      >
-                        Update
-                      </button>
+        {(provided) =>
+          user && (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="space-y-4"
+            >
+              {tasks.map((task, index) => (
+                <Draggable key={task._id} draggableId={task._id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      className="p-4 border rounded-xl shadow-md bg-white hover:shadow-lg transition-all flex flex-col gap-3"
+                    >
+                      {/* Task Content */}
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {task.title}({task.position + 1})
+                        </h3>
+                        <p className="text-sm font-medium mt-2 px-2 py-1 w-fit rounded-lg bg-green-100 text-green-700 shadow-sm">
+                          {task.category}
+                        </p>
+                        <p className="text-gray-600 text-sm mt-2 text-justify">
+                          {task.description}
+                        </p>
+                      </div>
+
+                      {/* Bottom Section - Buttons */}
+                      <div className="flex justify-between items-center mt-4 pt-3 border-t">
+                        <span className="text-xs text-gray-500">
+                          Last Updated:{" "}
+                          {format(
+                            new Date(task.modifiedTime),
+                            "EEEE, MMM dd, yyyy - hh:mm a"
+                          )}
+                        </span>
+                        <div className="flex gap-3">
+                          <button
+                            className="hover:text-blue-600 transition-all"
+                            onClick={() => openEditModal(task)}
+                          >
+                            <FiEdit className="text-xl" />
+                          </button>
+                          <button
+                            className="hover:text-red-600 transition-all"
+                            onClick={() => handleDelete(task._id)}
+                          >
+                            <FiTrash className="text-xl" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )
+        }
       </Droppable>
 
       {/* Edit Task Modal */}
       {isEditModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Edit Task</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md md:max-w-lg">
+            <h2 className="text-xl md:text-2xl font-bold mb-5 text-gray-800">
+              Edit Task
+            </h2>
             <input
               type="text"
               value={editTask.title}
@@ -185,7 +133,7 @@ const TaskColumn = ({ title, tasks, droppableId, openModal, refetch }) => {
                 setEditTask({ ...editTask, title: e.target.value })
               }
               placeholder="Task Name"
-              className="w-full p-2 border rounded mb-3"
+              className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-400"
             />
             <textarea
               value={editTask.description}
@@ -193,18 +141,18 @@ const TaskColumn = ({ title, tasks, droppableId, openModal, refetch }) => {
                 setEditTask({ ...editTask, description: e.target.value })
               }
               placeholder="Short Description"
-              className="w-full p-2 border rounded mb-3"
+              className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-400"
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={closeEditModal}
-                className="mr-2 px-4 py-2 bg-gray-400 rounded"
+                className="px-5 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpdateTask}
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all"
               >
                 Update
               </button>

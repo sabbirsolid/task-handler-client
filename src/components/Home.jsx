@@ -3,10 +3,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { Toaster, toast } from "react-hot-toast";
 import axios from "axios";
-import Navbar from "./Navbar";
-import Login from "./Login";
 import { AuthContext } from "../Provider/AuthProvider";
 import TaskColumn from "./TaskColumn";
+import { FiPlus } from "react-icons/fi";
 
 const Home = () => {
   const { user, loading } = useContext(AuthContext);
@@ -41,7 +40,6 @@ const Home = () => {
           .filter((task) => task.category === "done")
           .sort((a, b) => a.position - b.position),
       };
-
       return sortedTasks;
     },
     enabled: !!user?.email,
@@ -96,53 +94,6 @@ const Home = () => {
     },
     onError: () => toast.error("Failed to reorder tasks"),
   });
-
-  // const onDragEnd = (result) => {
-  //   const { source, destination } = result;
-  //   if (!destination) return;
-
-  //   const startColumn = source.droppableId;
-  //   const endColumn = destination.droppableId;
-
-  //   if (startColumn === endColumn && source.index === destination.index) return;
-
-  //   const movedTask = tasks[startColumn][source.index];
-
-  //   // Optimistically update UI before API call
-  //   queryClient.setQueryData(["tasks"], (oldData) => {
-  //     const newTasks = { ...oldData };
-  //     newTasks[startColumn] = newTasks[startColumn].filter((task, index) => index !== source.index);
-  //     newTasks[endColumn] = [
-  //       ...newTasks[endColumn].slice(0, destination.index),
-  //       movedTask,
-  //       ...newTasks[endColumn].slice(destination.index),
-  //     ];
-
-  //     // Update positions within the category
-  //     newTasks[endColumn].forEach((task, index) => {
-  //       task.position = index;
-  //     });
-
-  //     return newTasks;
-  //   });
-
-  //   // Update backend
-  //   if (startColumn === endColumn) {
-  //     // Reorder tasks within the same category
-  //     reorderTasksMutation.mutate({
-  //       email: user.email,
-  //       category: startColumn,
-  //       tasks: newTasks[startColumn], // Use the updated tasks array
-  //     });
-  //   } else {
-  //     // Move task to another category
-  //     updateTaskMutation.mutate({
-  //       taskId: movedTask._id,
-  //       category: endColumn,
-  //       position: destination.index,
-  //     });
-  //   }
-  // };
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -232,82 +183,207 @@ const Home = () => {
   }
 
   return (
-    <div className="min-h-screen p-8">
+    // <div className="min-h-screen p-8">
+    //   <Toaster position="top-right" />
+    //   <Navbar />
+    //   <h1 className="text-4xl text-center font-bold text-gray-800 mb-8">
+    //     Task Management
+    //   </h1>
+
+    //   {user && (
+    //     <DragDropContext onDragEnd={onDragEnd}>
+    //       <div className="flex justify-between items-center mb-4">
+
+    //     <button
+    //       onClick={openModal}
+    //       className="px-4 py-2 bg-blue-600 text-white rounded"
+    //     >
+    //       <FiPlus className="inline-block mr-1" />
+    //       Add Task
+    //     </button>
+    //   </div>
+    //       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+    //       <h2 className="text-xl font-semibold">To Do</h2>
+    //         <TaskColumn
+    //           tasks={tasks.todo}
+    //           droppableId="todo"
+    //           openModal={openModal}
+    //           refetch={refetch}
+    //         />
+    //         <h2 className="text-xl font-semibold">In Progress</h2>
+    //         <TaskColumn
+
+    //           tasks={tasks["in-progress"]}
+    //           droppableId="in-progress"
+    //           openModal={openModal}
+    //           refetch={refetch}
+    //         />
+    //         <h2 className="text-xl font-semibold">Done</h2>
+    //         <TaskColumn
+
+    //           tasks={tasks.done}
+    //           droppableId="done"
+    //           openModal={openModal}
+    //           refetch={refetch}
+    //         />
+    //       </div>
+    //     </DragDropContext>
+    //   )}
+
+    //   <Login />
+
+    //   {modalOpen && (
+    //     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    //       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+    //         <h2 className="text-xl font-bold mb-4">Add Task</h2>
+    //         <input
+    //           type="text"
+    //           name="title"
+    //           value={newTask.title}
+    //           onChange={handleInputChange}
+    //           placeholder="Task Name"
+    //           className="w-full p-2 border rounded mb-3"
+    //         />
+    //         <textarea
+    //           name="description"
+    //           value={newTask.description}
+    //           onChange={handleInputChange}
+    //           placeholder="Short Description"
+    //           className="w-full p-2 border rounded mb-3"
+    //         />
+    //         <select
+    //           name="category"
+    //           value={newTask.category}
+    //           onChange={handleInputChange}
+    //           className="w-full p-2 border rounded mb-3"
+    //         >
+    //           <option value="todo">To Do</option>
+    //           <option value="in-progress">In Progress</option>
+    //           <option value="done">Done</option>
+    //         </select>
+    //         <div className="flex justify-end">
+    //           <button
+    //             onClick={closeModal}
+    //             className="mr-2 px-4 py-2 bg-gray-400 rounded"
+    //           >
+    //             Cancel
+    //           </button>
+    //           <button
+    //             onClick={handleAddTask}
+    //             className="px-4 py-2 bg-blue-600 text-white rounded"
+    //           >
+    //             Add Task
+    //           </button>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   )}
+    // </div>
+    <div className="min-h-screen p-4 md:p-8 bg-gradient-to-br from-gray-100 to-blue-100">
       <Toaster position="top-right" />
-      <Navbar />
-      <h1 className="text-4xl text-center font-bold text-gray-800 mb-8">
+
+      <h1 className="text-3xl md:text-4xl text-center font-extrabold text-gray-800 mb-6 md:mb-8">
         Task Management
       </h1>
 
-      {user && (
-        <DragDropContext onDragEnd={onDragEnd}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <DragDropContext onDragEnd={onDragEnd}>
+        {/* Add Task Button */}
+        <div className="flex justify-center md:justify-end mb-6">
+          <button
+            disabled={!user}
+            onClick={openModal}
+            className={`flex items-center gap-2 px-5 py-3 text-white font-medium rounded-lg shadow-lg transition-all
+    ${
+      user ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
+    }`}
+          >
+            <FiPlus className="text-lg" />
+            Add Task
+          </button>
+        </div>
+
+        {/* Task Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="p-4 bg-white rounded-xl shadow-lg">
+            <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800">
+              To Do
+            </h2>
             <TaskColumn
-              title="To Do"
               tasks={tasks.todo}
               droppableId="todo"
               openModal={openModal}
               refetch={refetch}
             />
+          </div>
+
+          <div className="p-4 bg-white rounded-xl shadow-lg">
+            <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800">
+              In Progress
+            </h2>
             <TaskColumn
-              title="In Progress"
               tasks={tasks["in-progress"]}
               droppableId="in-progress"
               openModal={openModal}
               refetch={refetch}
             />
+          </div>
+
+          <div className="p-4 bg-white rounded-xl shadow-lg">
+            <h2 className="text-lg md:text-xl font-semibold mb-4 text-gray-800">
+              Done
+            </h2>
             <TaskColumn
-              title="Done"
               tasks={tasks.done}
               droppableId="done"
               openModal={openModal}
               refetch={refetch}
             />
           </div>
-        </DragDropContext>
-      )}
+        </div>
+      </DragDropContext>
 
-      <Login />
-
+      {/* Task Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl font-bold mb-4">Add Task</h2>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
+          <div className="bg-white p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md md:max-w-lg">
+            <h2 className="text-xl md:text-2xl font-bold mb-5 text-gray-800">
+              Add Task
+            </h2>
             <input
               type="text"
               name="title"
               value={newTask.title}
               onChange={handleInputChange}
               placeholder="Task Name"
-              className="w-full p-2 border rounded mb-3"
+              className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-400"
             />
             <textarea
               name="description"
               value={newTask.description}
               onChange={handleInputChange}
               placeholder="Short Description"
-              className="w-full p-2 border rounded mb-3"
+              className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-400"
             />
             <select
               name="category"
               value={newTask.category}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded mb-3"
+              className="w-full p-3 border rounded-lg mb-3 bg-white focus:ring-2 focus:ring-blue-400"
             >
               <option value="todo">To Do</option>
               <option value="in-progress">In Progress</option>
               <option value="done">Done</option>
             </select>
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
               <button
                 onClick={closeModal}
-                className="mr-2 px-4 py-2 bg-gray-400 rounded"
+                className="px-5 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg transition-all"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddTask}
-                className="px-4 py-2 bg-blue-600 text-white rounded"
+                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all"
               >
                 Add Task
               </button>
@@ -320,6 +396,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
