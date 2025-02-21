@@ -1,8 +1,7 @@
 import { useContext, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { DragDropContext, } from "@hello-pangea/dnd";
+import { DragDropContext } from "@hello-pangea/dnd";
 import { Toaster, toast } from "react-hot-toast";
-
 import axios from "axios";
 import Navbar from "./Navbar";
 import Login from "./Login";
@@ -13,49 +12,41 @@ const Home = () => {
   const { user, loading } = useContext(AuthContext);
   const queryClient = useQueryClient();
 
-  // Fetch tasks using TanStack Query
-  // const { data: tasks = { todo: [], "in-progress": [], done: [] }, refetch, isLoading } =
-  //   useQuery({
-  //     queryKey: ["tasks"],
-  //     queryFn: async () => {
-  //       const email = user?.email;
-  //       const res = await axios.get(
-  //         `http://localhost:5000/getTasks?email=${email}`
-  //       );
-  //       const fetchedTasks = res.data;
-  //       return {
-  //         todo: fetchedTasks.filter((task) => task.category === "todo"),
-  //         "in-progress": fetchedTasks.filter(
-  //           (task) => task.category === "in-progress"
-  //         ),
-  //         done: fetchedTasks.filter((task) => task.category === "done"),
-  //       };
-  //     },
-  //   });
-
-  const { data: tasks = { todo: [], "in-progress": [], done: [] }, refetch, isLoading } = useQuery({
+  const {
+    data: tasks = { todo: [], "in-progress": [], done: [] },
+    refetch,
+    isLoading,
+  } = useQuery({
     queryKey: ["tasks"],
     queryFn: async () => {
       if (!user?.email) {
         toast.error("User email is not available.");
-        return { todo: [], "in-progress": [], done: [] }; // Return empty tasks if no email
+        return { todo: [], "in-progress": [], done: [] };
       }
 
       const email = user.email;
-      const res = await axios.get(`http://localhost:5000/getTasks?email=${email}`);
+      const res = await axios.get(
+        `http://localhost:5000/getTasks?email=${email}`
+      );
       const fetchedTasks = res.data;
-      return {
-        todo: fetchedTasks.filter((task) => task.category === "todo"),
-        "in-progress": fetchedTasks.filter((task) => task.category === "in-progress"),
-        done: fetchedTasks.filter((task) => task.category === "done"),
+
+      const sortedTasks = {
+        todo: fetchedTasks
+          .filter((task) => task.category === "todo")
+          .sort((a, b) => a.position - b.position),
+        "in-progress": fetchedTasks
+          .filter((task) => task.category === "in-progress")
+          .sort((a, b) => a.position - b.position),
+        done: fetchedTasks
+          .filter((task) => task.category === "done")
+          .sort((a, b) => a.position - b.position),
       };
+
+      return sortedTasks;
     },
-    enabled: !!user?.email, // Only run the query if the email is available
+    enabled: !!user?.email,
   });
 
-   
-
-  // Mutation for adding a new task
   const addTaskMutation = useMutation({
     mutationFn: async (newTask) => {
       const taskWithUserEmail = {
@@ -76,20 +67,82 @@ const Home = () => {
     onError: () => toast.error("Failed to add task"),
   });
 
-  // Mutation for updating task category
   const updateTaskMutation = useMutation({
-    mutationFn: async ({ taskId, category }) => {
+    mutationFn: async ({ taskId, category, position }) => {
       await axios.patch(`http://localhost:5000/updateTask/${taskId}`, {
         category,
+        position,
       });
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["tasks"]); // Refetch tasks after updating
+      queryClient.invalidateQueries(["tasks"]);
       toast.success("Task moved successfully!");
       refetch();
     },
     onError: () => toast.error("Failed to move task"),
   });
+
+  const reorderTasksMutation = useMutation({
+    mutationFn: async ({ email, category, tasks }) => {
+      await axios.post("http://localhost:5000/reorderTasks", {
+        email,
+        category,
+        tasks,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(["tasks"]);
+      toast.success("Tasks reordered successfully!");
+    },
+    onError: () => toast.error("Failed to reorder tasks"),
+  });
+
+  // const onDragEnd = (result) => {
+  //   const { source, destination } = result;
+  //   if (!destination) return;
+
+  //   const startColumn = source.droppableId;
+  //   const endColumn = destination.droppableId;
+
+  //   if (startColumn === endColumn && source.index === destination.index) return;
+
+  //   const movedTask = tasks[startColumn][source.index];
+
+  //   // Optimistically update UI before API call
+  //   queryClient.setQueryData(["tasks"], (oldData) => {
+  //     const newTasks = { ...oldData };
+  //     newTasks[startColumn] = newTasks[startColumn].filter((task, index) => index !== source.index);
+  //     newTasks[endColumn] = [
+  //       ...newTasks[endColumn].slice(0, destination.index),
+  //       movedTask,
+  //       ...newTasks[endColumn].slice(destination.index),
+  //     ];
+
+  //     // Update positions within the category
+  //     newTasks[endColumn].forEach((task, index) => {
+  //       task.position = index;
+  //     });
+
+  //     return newTasks;
+  //   });
+
+  //   // Update backend
+  //   if (startColumn === endColumn) {
+  //     // Reorder tasks within the same category
+  //     reorderTasksMutation.mutate({
+  //       email: user.email,
+  //       category: startColumn,
+  //       tasks: newTasks[startColumn], // Use the updated tasks array
+  //     });
+  //   } else {
+  //     // Move task to another category
+  //     updateTaskMutation.mutate({
+  //       taskId: movedTask._id,
+  //       category: endColumn,
+  //       position: destination.index,
+  //     });
+  //   }
+  // };
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -102,34 +155,45 @@ const Home = () => {
 
     const movedTask = tasks[startColumn][source.index];
 
-    // Optimistically update UI before API call
-    queryClient.setQueryData(["tasks"], (oldData) => {
-      const newTasks = { ...oldData };
-      newTasks[startColumn] = newTasks[startColumn].filter(
-        (task, index) => index !== source.index
-      );
-      newTasks[endColumn] = [
-        ...newTasks[endColumn].slice(0, destination.index),
-        movedTask,
-        ...newTasks[endColumn].slice(destination.index),
-      ];
+    // Create a deep copy of the tasks to update positions correctly
+    const newTasks = { ...tasks };
+    const updatedColumnTasks = [...newTasks[startColumn]];
 
-      return newTasks;
-    });
+    // Remove the task from its original position
+    updatedColumnTasks.splice(source.index, 1);
 
-    // Update backend
-    updateTaskMutation.mutate(
-      { taskId: movedTask._id, category: endColumn },
-      {
-        onError: () => {
-          toast.error("Failed to move task");
-          queryClient.invalidateQueries(["tasks"]);
-        },
-      }
-    );
+    // Insert the task at the new position
+    updatedColumnTasks.splice(destination.index, 0, movedTask);
+
+    // Reassign correct positions
+    const reorderedTasks = updatedColumnTasks.map((task, index) => ({
+      ...task,
+      position: index,
+    }));
+
+    // Update query cache optimistically
+    queryClient.setQueryData(["tasks"], (oldData) => ({
+      ...oldData,
+      [startColumn]: reorderedTasks,
+    }));
+
+    if (startColumn === endColumn) {
+      // If moving within the same category, update order
+      reorderTasksMutation.mutate({
+        email: user.email,
+        category: startColumn,
+        tasks: reorderedTasks, // Correctly ordered tasks
+      });
+    } else {
+      // If moving to a different category, update category and position
+      updateTaskMutation.mutate({
+        taskId: movedTask._id,
+        category: endColumn,
+        position: destination.index,
+      });
+    }
   };
 
-  // Modal States
   const [modalOpen, setModalOpen] = useState(false);
   const [newTask, setNewTask] = useState({
     title: "",
@@ -147,12 +211,10 @@ const Home = () => {
   };
   const closeModal = () => setModalOpen(false);
 
-  // Handle Input Change
   const handleInputChange = (e) => {
     setNewTask({ ...newTask, [e.target.name]: e.target.value });
   };
 
-  // Add New Task
   const handleAddTask = () => {
     if (!newTask.title || !newTask.description) {
       toast.error("Please fill in all fields");
@@ -207,7 +269,6 @@ const Home = () => {
 
       <Login />
 
-      {/* Add Task Modal */}
       {modalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -259,6 +320,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
