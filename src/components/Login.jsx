@@ -2,9 +2,11 @@ import { useContext } from "react";
 import { AuthContext } from "../Provider/AuthProvider";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { FaGoogle } from "react-icons/fa"; // Importing Google icon
 
 const Login = () => {
   const { signInWithGoogle } = useContext(AuthContext);
+
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle().then(async (res) => {
@@ -18,27 +20,28 @@ const Login = () => {
           // Send user data to the backend
           try {
             const response = await axios.post(
-              "http://localhost:5000/addUser",
+              "https://task-handler-server.vercel.app/addUser",
               userData
             );
-            toast.success("Login successful!");
+            toast.success("Login successful!", response.message);
           } catch (err) {
-            // console.error("Error sending user data to backend:", err);
+            console.error("Error sending user data to backend:", err.message);
           }
         }
       });
     } catch (error) {
-      // console.error("Google login error:", error);
+      console.error("Google login error:", error.message);
     }
   };
 
   return (
-    <div>
+    <div className="w-full flex justify-center">
       <button
         onClick={handleGoogleLogin}
-        className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition"
+        className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all w-full sm:w-auto"
       >
-        Sign in with Google
+        <FaGoogle size={15} /> {/* Google icon */}
+        <span>Sign in</span>
       </button>
     </div>
   );

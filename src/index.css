@@ -1,3 +1,189 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+*/ body {
+  background-color: #f8fafc;
+  color: #1e293b;
+}
+
+[data-theme="dark"] body {
+  background-color: #0f172a;
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .task-card {
+  background-color: #1e293b;
+  border-color: #334155;
+}
+
+[data-theme="dark"] .text-gray-600 {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .btn-primary {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #2563eb;
+}
+
+[data-theme="dark"] .btn-secondary {
+  background-color: #64748b;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: #475569;
+}
+
+/* Dark theme */
+[data-theme="dark"] body {
+  background-color: #0f172a; /* Dark blue-gray background */
+  color: #f8fafc; /* Light gray text */
+}
+
+/* Modal Styles */
+.modal-overlay {
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+}
+
+.modal-container {
+  background-color: #ffffff; /* White background for light mode */
+  border-radius: 1rem; /* Rounded corners */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+[data-theme="dark"] .modal-container {
+  background-color: #1e293b; /* Dark blue-gray background for dark mode */
+  border-color: #334155; /* Slightly lighter border for contrast */
+}
+
+.modal-header {
+  color: #1e293b; /* Dark gray text for light mode */
+  font-size: 1.5rem; /* Larger font size */
+  font-weight: 700; /* Bold font */
+}
+
+[data-theme="dark"] .modal-header {
+  color: #f8fafc; /* Light gray text for dark mode */
+}
+
+.modal-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1; /* Light gray border */
+  border-radius: 0.5rem; /* Rounded corners */
+  background-color: #ffffff; /* White background for light mode */
+  color: #1e293b; /* Dark gray text */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.modal-input:focus {
+  border-color: #3b82f6; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Blue focus ring */
+}
+
+[data-theme="dark"] .modal-input {
+  background-color: #334155; /* Darker gray background for dark mode */
+  border-color: #475569; /* Slightly lighter border */
+  color: #f8fafc; /* Light gray text */
+}
+
+[data-theme="dark"] .modal-input:focus {
+  border-color: #3b82f6; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Blue focus ring */
+}
+
+.modal-textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1; /* Light gray border */
+  border-radius: 0.5rem; /* Rounded corners */
+  background-color: #ffffff; /* White background for light mode */
+  color: #1e293b; /* Dark gray text */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.modal-textarea:focus {
+  border-color: #3b82f6; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Blue focus ring */
+}
+
+[data-theme="dark"] .modal-textarea {
+  background-color: #334155; /* Darker gray background for dark mode */
+  border-color: #475569; /* Slightly lighter border */
+  color: #f8fafc; /* Light gray text */
+}
+
+[data-theme="dark"] .modal-textarea:focus {
+  border-color: #3b82f6; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Blue focus ring */
+}
+
+.modal-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1; /* Light gray border */
+  border-radius: 0.5rem; /* Rounded corners */
+  background-color: #ffffff; /* White background for light mode */
+  color: #1e293b; /* Dark gray text */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.modal-select:focus {
+  border-color: #3b82f6; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* Blue focus ring */
+}
+
+[data-theme="dark"] .modal-select {
+  background-color: #334155; /* Darker gray background for dark mode */
+  border-color: #475569; /* Slightly lighter border */
+  color: #f8fafc; /* Light gray text */
+}
+
+[data-theme="dark"] .modal-select:focus {
+  border-color: #3b82f6; /* Blue border on focus */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Blue focus ring */
+}
+
+.modal-button-cancel {
+  background-color: #cbd5e1; /* Light gray background */
+  color: #1e293b; /* Dark gray text */
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.modal-button-cancel:hover {
+  background-color: #94a3b8; /* Darker gray on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+[data-theme="dark"] .modal-button-cancel {
+  background-color: #475569; /* Dark gray background */
+  color: #f8fafc; /* Light gray text */
+}
+
+[data-theme="dark"] .modal-button-cancel:hover {
+  background-color: #64748b; /* Lighter gray on hover */
+}
+
+.modal-button-primary {
+  background-color: #3b82f6; /* Blue background */
+  color: #ffffff; /* White text */
+  transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.modal-button-primary:hover {
+  background-color: #2563eb; /* Darker blue on hover */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+[data-theme="dark"] .modal-button-primary {
+  background-color: #3b82f6; /* Blue background */
+  color: #ffffff; /* White text */
+}
+
+[data-theme="dark"] .modal-button-primary:hover {
+  background-color: #2563eb; /* Darker blue on hover */
+}
