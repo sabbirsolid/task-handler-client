@@ -119,13 +119,15 @@ const Navbar = () => {
               ))}
 
               {/* Logout Button for Mobile */}
-              {user && (
+              {user ? (
                 <button
                   onClick={logOut}
                   className="flex items-center w-fit bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg transition-colors mt-2"
                 >
                   <FaSignOutAlt className="inline mr-2" /> Logout
                 </button>
+              ) : (
+                <Login />
               )}
             </div>
           </div>

@@ -52,7 +52,7 @@ const ActivityLog = () => {
       {/* Simple List Layout */}
       {user && (
         <ul className="space-y-6">
-          {history.map((log, index) => (
+          {history?.map((log, index) => (
             <li key={index} className="border-b pb-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2">
                 {/* Action & Timestamp */}
