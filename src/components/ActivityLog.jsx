@@ -50,7 +50,7 @@ const ActivityLog = () => {
       <h2 className="text-3xl font-bold text-center mb-6">Activity Log</h2>
 
       {/* Simple List Layout */}
-      {history && (
+      {user && (
         <ul className="space-y-6">
           {history.map((log, index) => (
             <li key={index} className="border-b pb-4">
