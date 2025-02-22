@@ -2,6 +2,7 @@ import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import { GoogleAuthProvider } from "firebase/auth";
 import auth from "./firebase.config";
+import PropTypes from "prop-types";
 
 export const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
@@ -39,3 +40,7 @@ const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
+
+AuthProvider.propTypes = {
+  children: PropTypes.object.isRequired,
+};
