@@ -14,9 +14,7 @@ const TaskColumn = ({ tasks, droppableId, refetch }) => {
   const { user } = useContext(AuthContext);
 
   const handleDelete = async (id) => {
-    const res = await axios.delete(
-      `https://task-handler-server.vercel.app/deleteTask/${id}`
-    );
+    const res = await axios.delete(`http://localhost:5000/deleteTask/${id}`);
     if (res.data.deletedCount > 0) {
       refetch();
       toast.success("Deleted Successfully");
@@ -41,16 +39,16 @@ const TaskColumn = ({ tasks, droppableId, refetch }) => {
 
     try {
       await axios.patch(
-        `https://task-handler-server.vercel.app/updateTaskInfo/${editTask._id}`,
+        `http://localhost:5000/updateTaskInfo/${editTask._id}`,
         {
           title: editTask.title,
           description: editTask.description,
           category: editTask.category,
+          email: user?.email,
         }
       );
-
-      toast.success("Task updated successfully!");
       refetch();
+      toast.success("Task updated successfully!");
       closeEditModal();
     } catch (error) {
       toast.error("Failed to update task", error.message);

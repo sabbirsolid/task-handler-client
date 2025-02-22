@@ -20,7 +20,7 @@ const Login = () => {
           // Send user data to the backend
           try {
             const response = await axios.post(
-              "https://task-handler-server.vercel.app/addUser",
+              "http://localhost:5000/addUser",
               userData
             );
             toast.success("Login successful!", response.message);
@@ -40,7 +40,7 @@ const Login = () => {
         onClick={handleGoogleLogin}
         className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all w-full sm:w-auto"
       >
-        <FaGoogle size={15} /> 
+        <FaGoogle size={15} />
         <span>Sign in</span>
       </button>
     </div>

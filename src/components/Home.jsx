@@ -27,7 +27,7 @@ const Home = () => {
 
       const email = user.email;
       const res = await axios.get(
-        `https://task-handler-server.vercel.app/getTasks?email=${email}`
+        `http://localhost:5000/getTasks?email=${email}`
       );
       const fetchedTasks = res.data;
 
@@ -54,7 +54,7 @@ const Home = () => {
         email: user.email,
       };
       const res = await axios.post(
-        "https://task-handler-server.vercel.app/addTask",
+        "http://localhost:5000/addTask",
         taskWithUserEmail
       );
       return res.data.task;
@@ -69,13 +69,11 @@ const Home = () => {
 
   const updateTaskMutation = useMutation({
     mutationFn: async ({ taskId, category, position }) => {
-      await axios.patch(
-        `https://task-handler-server.vercel.app/updateTask/${taskId}`,
-        {
-          category,
-          position,
-        }
-      );
+      await axios.patch(`http://localhost:5000/updateTask/${taskId}`, {
+        category,
+        position,
+        email: user?.email
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["tasks"]);
@@ -87,7 +85,7 @@ const Home = () => {
 
   const reorderTasksMutation = useMutation({
     mutationFn: async ({ email, category, tasks }) => {
-      await axios.patch("https://task-handler-server.vercel.app/reorderTasks", {
+      await axios.patch("http://localhost:5000/reorderTasks", {
         email,
         category,
         tasks,
@@ -182,16 +180,16 @@ const Home = () => {
   if (isLoading || loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <BeatLoader color="#D97706" size={10} />
+        <BeatLoader color="#2563EB" size={10} />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8 ">
+    <div className="min-h-screen p-4 md:p-8 animate-slideDown">
       <Toaster position="top-right" />
 
-      <h1 className="text-3xl md:text-4xl text-center font-bold  mb-6 md:mb-8">
+      <h1 className="text-2xl md:text-3xl text-center font-bold  mb-4 md:mb-6">
         Task Management
       </h1>
       <p className="mb-2 text-center">NB: Drag and Drop to change category</p>
@@ -252,9 +250,10 @@ const Home = () => {
         </div>
       </DragDropContext>
 
-      {/* Task Modal */}
+      
+
       {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center modal-overlay p-4">
+        <div className="fixed inset-0 flex items-center justify-center modal-overlay p-4 animate-slideDown">
           <div className="modal-container p-6 md:p-8 w-full max-w-md md:max-w-lg">
             {/* Modal Header */}
             <h2 className="modal-header mb-5">Add Task</h2>
@@ -277,6 +276,15 @@ const Home = () => {
               placeholder="Short Description"
               className="modal-textarea mb-4"
               rows="4"
+            />
+
+            <h1>Deadline</h1>
+            <input
+              type="date"
+              name="deadline"
+              value={newTask.deadline}
+              onChange={handleInputChange}
+              className="modal-input mb-4"
             />
 
             {/* Task Category Select */}
