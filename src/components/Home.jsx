@@ -27,7 +27,7 @@ const Home = () => {
 
       const email = user.email;
       const res = await axios.get(
-        `https://task-handler-server.vercel.app/getTasks?email=${email}`
+        `http://localhost:5000/getTasks?email=${email}`
       );
       const fetchedTasks = res.data;
 
@@ -54,7 +54,7 @@ const Home = () => {
         email: user.email,
       };
       const res = await axios.post(
-        "https://task-handler-server.vercel.app/addTask",
+        "http://localhost:5000/addTask",
         taskWithUserEmail
       );
       return res.data.task;
@@ -70,7 +70,7 @@ const Home = () => {
   const updateTaskMutation = useMutation({
     mutationFn: async ({ taskId, category, position }) => {
       await axios.patch(
-        `https://task-handler-server.vercel.app/updateTask/${taskId}`,
+        `http://localhost:5000/updateTask/${taskId}`,
         {
           category,
           position,
@@ -87,7 +87,7 @@ const Home = () => {
 
   const reorderTasksMutation = useMutation({
     mutationFn: async ({ email, category, tasks }) => {
-      await axios.post("https://task-handler-server.vercel.app/reorderTasks", {
+      await axios.post("http://localhost:5000/reorderTasks", {
         email,
         category,
         tasks,
@@ -252,54 +252,6 @@ const Home = () => {
       </DragDropContext>
 
       {/* Task Modal */}
-      {/* {modalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4">
-          <div className=" p-6 md:p-8 rounded-2xl shadow-2xl w-full max-w-md md:max-w-lg">
-            <h2 className="text-xl md:text-2xl font-bold mb-5 ">
-              Add Task
-            </h2>
-            <input
-              type="text"
-              name="title"
-              value={newTask.title}
-              onChange={handleInputChange}
-              placeholder="Task Name"
-              className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-400"
-            />
-            <textarea
-              name="description"
-              value={newTask.description}
-              onChange={handleInputChange}
-              placeholder="Short Description"
-              className="w-full p-3 border rounded-lg mb-3 focus:ring-2 focus:ring-blue-400"
-            />
-            <select
-              name="category"
-              value={newTask.category}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded-lg mb-3 bg-white focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="todo">To Do</option>
-              <option value="in-progress">In Progress</option>
-              <option value="done">Done</option>
-            </select>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={closeModal}
-                className="px-5 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg transition-all"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleAddTask}
-                className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all"
-              >
-                Add Task
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
       {modalOpen && (
         <div className="fixed inset-0 flex items-center justify-center modal-overlay p-4">
           <div className="modal-container p-6 md:p-8 w-full max-w-md md:max-w-lg">
