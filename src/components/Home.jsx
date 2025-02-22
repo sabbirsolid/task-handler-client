@@ -194,11 +194,11 @@ const Home = () => {
       <h1 className="text-3xl md:text-4xl text-center font-bold  mb-6 md:mb-8">
         Task Management
       </h1>
-      <p className=" text-center">NB: Drag and Drop to change category</p>
+      <p className="mb-2 text-center">NB: Drag and Drop to change category</p>
 
       <DragDropContext onDragEnd={onDragEnd}>
         {/* Add Task Button */}
-        <div className="flex justify-center md:justify-end mb-6">
+        <div className="flex justify-center  mb-6">
           <button
             disabled={!user}
             onClick={openModal}
@@ -207,8 +207,8 @@ const Home = () => {
       user ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-400 cursor-not-allowed"
     }`}
           >
-            <FiPlus className="text-lg" />
-            Add Task
+            {user ? <FiPlus className="text-lg" /> : ""}
+            {user ? "Add Task" : "Sign In to Add Task"}
           </button>
         </div>
 

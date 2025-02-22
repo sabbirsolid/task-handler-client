@@ -10,7 +10,6 @@ const useTheme = () => {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    console.log("Setting theme:", theme);
     root.setAttribute("data-theme", theme);
     localStorage.setItem("selectedTheme", theme);
   }, [theme]);

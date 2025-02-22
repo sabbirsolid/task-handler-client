@@ -25,12 +25,12 @@ const Login = () => {
             );
             toast.success("Login successful!", response.message);
           } catch (err) {
-            console.error("Error sending user data to backend:", err.message);
+            // console.error("Error sending user data to backend:", err.message);
           }
         }
       });
     } catch (error) {
-      console.error("Google login error:", error.message);
+      // console.error("Google login error:", error.message);
     }
   };
 
@@ -40,7 +40,7 @@ const Login = () => {
         onClick={handleGoogleLogin}
         className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition-all w-full sm:w-auto"
       >
-        <FaGoogle size={15} /> {/* Google icon */}
+        <FaGoogle size={15} /> 
         <span>Sign in</span>
       </button>
     </div>
