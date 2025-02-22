@@ -4,8 +4,7 @@
 The **Task Management Application** is a feature-rich web app that allows users to efficiently organize their tasks using a **drag-and-drop** interface. Tasks are categorized into three sections: **To-Do, In Progress, and Done**, ensuring a structured workflow. The app instantly syncs changes to a **MongoDB database**, providing **real-time persistence**.
 
 This project demonstrates expertise in **frontend interactivity, backend data management, and real-time synchronization** while maintaining a **clean and responsive UI**.
-![Screenshot of the Application](#)  
-*(https://i.ibb.co.com/wZn2jPvt/Screenshot-226.png)*
+![Blog Spotter SS ](https://i.ibb.co.com/wZn2jPvt/Screenshot-226.png)   
 ## 🚀 Features
 ### 🔐 Authentication
 - Users must **sign in** to access the application.
