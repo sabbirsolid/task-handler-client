@@ -1,10 +1,10 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider";
 import Login from "./Login";
-import { FaSignOutAlt } from "react-icons/fa"; // Importing icons
+import { FaSignOutAlt } from "react-icons/fa";
 import ThemeToggle from "./DarkMode/ThemeToggle";
 
-export default function Navbar() {
+const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -70,7 +70,7 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                {/* Minimal Login Button for Mobile */}
+ 
                 <div className="sm:hidden">
                   <Login />
                 </div>
@@ -87,4 +87,5 @@ export default function Navbar() {
       </div>
     </nav>
   );
-}
+};
+export default Navbar;

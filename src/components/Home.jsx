@@ -27,7 +27,7 @@ const Home = () => {
 
       const email = user.email;
       const res = await axios.get(
-        `http://localhost:5000/getTasks?email=${email}`
+        `https://task-handler-server.vercel.app/getTasks?email=${email}`
       );
       const fetchedTasks = res.data;
 
@@ -54,7 +54,7 @@ const Home = () => {
         email: user.email,
       };
       const res = await axios.post(
-        "http://localhost:5000/addTask",
+        "https://task-handler-server.vercel.app/addTask",
         taskWithUserEmail
       );
       return res.data.task;
@@ -70,7 +70,7 @@ const Home = () => {
   const updateTaskMutation = useMutation({
     mutationFn: async ({ taskId, category, position }) => {
       await axios.patch(
-        `http://localhost:5000/updateTask/${taskId}`,
+        `https://task-handler-server.vercel.app/updateTask/${taskId}`,
         {
           category,
           position,
@@ -87,7 +87,7 @@ const Home = () => {
 
   const reorderTasksMutation = useMutation({
     mutationFn: async ({ email, category, tasks }) => {
-      await axios.post("http://localhost:5000/reorderTasks", {
+      await axios.patch("https://task-handler-server.vercel.app/reorderTasks", {
         email,
         category,
         tasks,
@@ -191,9 +191,10 @@ const Home = () => {
     <div className="min-h-screen p-4 md:p-8 ">
       <Toaster position="top-right" />
 
-      <h1 className="text-3xl md:text-4xl text-center font-extrabold  mb-6 md:mb-8">
+      <h1 className="text-3xl md:text-4xl text-center font-bold  mb-6 md:mb-8">
         Task Management
       </h1>
+      <p className=" text-center">NB: Drag and Drop to change category</p>
 
       <DragDropContext onDragEnd={onDragEnd}>
         {/* Add Task Button */}
@@ -213,8 +214,8 @@ const Home = () => {
 
         {/* Task Columns */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="p-4 h-fit  border rounded-xl shadow-lg">
-            <h2 className="text-lg md:text-xl text-center font-semibold mb-4">
+          <div className="p-4 h-fit border rounded-xl shadow-lg bg-gray-100 task-card">
+            <h2 className="text-lg md:text-xl text-center font-semibold mb-4 px-4 py-2  rounded-lg bg-gray-200 task-card shadow-lg">
               To Do
             </h2>
             <TaskColumn
@@ -225,8 +226,8 @@ const Home = () => {
             />
           </div>
 
-          <div className="p-4 h-fit  border rounded-xl shadow-lg">
-            <h2 className="text-lg md:text-xl text-center font-semibold mb-4 ">
+          <div className="p-4 h-fit border rounded-xl shadow-lg bg-gray-100 task-card">
+            <h2 className="text-lg md:text-xl text-center font-semibold mb-4 px-4 py-2  rounded-lg bg-gray-200 task-card shadow-lg">
               In Progress
             </h2>
             <TaskColumn
@@ -237,8 +238,8 @@ const Home = () => {
             />
           </div>
 
-          <div className="p-4 h-fit  border rounded-xl shadow-lg">
-            <h2 className="text-lg md:text-xl text-center font-semibold mb-4 ">
+          <div className="p-4 h-fit border rounded-xl shadow-lg bg-gray-100 task-card">
+            <h2 className="text-lg md:text-xl text-center font-semibold mb-4 px-4 py-2  rounded-lg bg-gray-200 task-card shadow-lg">
               Done
             </h2>
             <TaskColumn

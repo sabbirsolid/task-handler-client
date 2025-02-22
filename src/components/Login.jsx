@@ -20,7 +20,7 @@ const Login = () => {
           // Send user data to the backend
           try {
             const response = await axios.post(
-              "http://localhost:5000/addUser",
+              "https://task-handler-server.vercel.app/addUser",
               userData
             );
             toast.success("Login successful!", response.message);

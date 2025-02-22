@@ -27,6 +27,16 @@ const EditModal = ({
         placeholder="Short Description"
         className="modal-textarea mb-4"
       />
+      <select
+        name="category"
+        value={editTask.category}
+        onChange={(e) => setEditTask({ ...editTask, category: e.target.value })}
+        className="modal-select mb-6"
+      >
+        <option value="todo">To Do</option>
+        <option value="in-progress">In Progress</option>
+        <option value="done">Done</option>
+      </select>
 
       {/* Modal Buttons */}
       <div className="flex justify-end gap-3">
