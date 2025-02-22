@@ -5,7 +5,7 @@ The **Task Management Application** is a feature-rich web app that allows users 
 
 This project demonstrates expertise in **frontend interactivity, backend data management, and real-time synchronization** while maintaining a **clean and responsive UI**.
 
-🔗 **Live Demo:** [Blog Spotter](https://task-handler-d2746.web.app)  
+🔗 **Live Demo:** [Task Handler](https://task-handler-d2746.web.app)  
 ![Blog Spotter SS ](https://i.ibb.co.com/wZn2jPvt/Screenshot-226.png)
 
 ## 🚀 Features
