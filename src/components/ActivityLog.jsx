@@ -18,7 +18,7 @@ const ActivityLog = () => {
     queryKey: ["history", user?.email],
     queryFn: async () => {
       const response = await fetch(
-        `http://localhost:5000/getHistory/${user.email}`
+        `https://task-handler-server.vercel.app/getHistory/${user.email}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch history");
@@ -28,7 +28,9 @@ const ActivityLog = () => {
   });
 
   const handleDelete = async (id) => {
-    const res = await axios.delete(`http://localhost:5000/history/${id}`);
+    const res = await axios.delete(
+      `https://task-handler-server.vercel.app/history/${id}`
+    );
     if (res.data.deletedCount > 0) {
       toast.success("Deleted Successfully");
       refetch();

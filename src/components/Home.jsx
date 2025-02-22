@@ -27,7 +27,7 @@ const Home = () => {
 
       const email = user.email;
       const res = await axios.get(
-        `http://localhost:5000/getTasks?email=${email}`
+        `https://task-handler-server.vercel.app/getTasks?email=${email}`
       );
       const fetchedTasks = res.data;
 
@@ -54,7 +54,7 @@ const Home = () => {
         email: user.email,
       };
       const res = await axios.post(
-        "http://localhost:5000/addTask",
+        "https://task-handler-server.vercel.app/addTask",
         taskWithUserEmail
       );
       return res.data.task;
@@ -69,11 +69,14 @@ const Home = () => {
 
   const updateTaskMutation = useMutation({
     mutationFn: async ({ taskId, category, position }) => {
-      await axios.patch(`http://localhost:5000/updateTask/${taskId}`, {
-        category,
-        position,
-        email: user?.email
-      });
+      await axios.patch(
+        `https://task-handler-server.vercel.app/updateTask/${taskId}`,
+        {
+          category,
+          position,
+          email: user?.email,
+        }
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["tasks"]);
@@ -85,7 +88,7 @@ const Home = () => {
 
   const reorderTasksMutation = useMutation({
     mutationFn: async ({ email, category, tasks }) => {
-      await axios.patch("http://localhost:5000/reorderTasks", {
+      await axios.patch("https://task-handler-server.vercel.app/reorderTasks", {
         email,
         category,
         tasks,
@@ -249,8 +252,6 @@ const Home = () => {
           </div>
         </div>
       </DragDropContext>
-
-      
 
       {modalOpen && (
         <div className="fixed inset-0 flex items-center justify-center modal-overlay p-4 animate-slideDown">
